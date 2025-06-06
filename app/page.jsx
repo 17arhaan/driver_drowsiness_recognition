@@ -31,7 +31,7 @@ import {
   Bell,
 } from "lucide-react"
 
-const PYTHON_BACKEND_URL = "https://backend-drowsiness-project-production.up.railway.app/process_frame/"
+const PYTHON_BACKEND_URL = "https://backend-drowsiness-project-production.up.railway.app/process_frame"
 const PYTHON_HEALTH_CHECK_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://backend-drowsiness-project-production.up.railway.app"
 
 export default function DrowsinessDetectionDashboard() {
@@ -129,8 +129,11 @@ export default function DrowsinessDetectionDashboard() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Accept": "application/json",
         },
         body: JSON.stringify({ image: imageDataUrl }),
+        mode: 'cors',
+        credentials: 'omit'
       })
 
       const endTime = performance.now()
@@ -141,8 +144,11 @@ export default function DrowsinessDetectionDashboard() {
         const errorText = await response.text()
         console.error("[FRONTEND] Backend error on /process_frame:", response.status, errorText)
         setBackendErrorMessage(`Backend error: ${response.status}. ${errorText.substring(0, 100)}`)
-        setIsConnectedToBackend(false) // Assume disconnected on error
-      } else {
+        setIsConnectedToBackend(false)
+        return
+      }
+
+      try {
         const data = await response.json()
         if (data.error) {
           console.error("[FRONTEND] Backend processing error:", data.error)
@@ -155,9 +161,13 @@ export default function DrowsinessDetectionDashboard() {
           setGazeDirection(data.gazeDirection)
           setIsBlinking(data.blinkDetected)
           setAlertActive(data.drowsinessScore > 75)
-          if (backendErrorMessage) setBackendErrorMessage("") // Clear error if processing succeeds
-          if (!isConnectedToBackend) setIsConnectedToBackend(true) // Mark as connected if it wasn't
+          if (backendErrorMessage) setBackendErrorMessage("")
+          if (!isConnectedToBackend) setIsConnectedToBackend(true)
         }
+      } catch (error) {
+        console.error("[FRONTEND] Error parsing backend response:", error)
+        setBackendErrorMessage(`Failed to parse backend response: ${error.message}`)
+        setIsConnectedToBackend(false)
       }
     } catch (error) {
       console.error("[FRONTEND] Error sending frame to backend (fetch failed):", error)

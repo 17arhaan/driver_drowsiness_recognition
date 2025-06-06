@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import uvicorn
 import os
 from dotenv import load_dotenv
+import random
 
 # Load environment variables
 load_dotenv()
@@ -54,14 +55,18 @@ async def health_check():
 @app.post("/process_frame")
 async def process_frame(frame_data: FrameData):
     try:
-        # For now, return a mock response
+        # Validate the image data
+        if not frame_data.image:
+            raise HTTPException(status_code=400, detail="No image data provided")
+            
+        # For now, return a mock response with some variation
         return {
-            "drowsinessScore": 0,
-            "earValue": 0.3,
-            "isYawning": False,
-            "isPhoneDetected": False,
-            "gazeDirection": "forward",
-            "blinkDetected": False
+            "drowsinessScore": random.randint(0, 100),
+            "earValue": random.uniform(0.2, 0.4),
+            "isYawning": random.choice([True, False]),
+            "isPhoneDetected": random.choice([True, False]),
+            "gazeDirection": random.choice(["forward", "left", "right"]),
+            "blinkDetected": random.choice([True, False])
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
