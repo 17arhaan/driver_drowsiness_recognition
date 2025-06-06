@@ -4,7 +4,7 @@ from pydantic import BaseModel
 import uvicorn
 import os
 from dotenv import load_dotenv
-import random
+from .detection import DrowsinessDetector
 
 # Load environment variables
 load_dotenv()
@@ -44,6 +44,9 @@ class HealthCheck(BaseModel):
 class FrameData(BaseModel):
     image: str
 
+# Initialize the drowsiness detector
+detector = DrowsinessDetector()
+
 @app.get("/")
 async def root():
     return {"message": "Driver Drowsiness Detection API is running"}
@@ -59,15 +62,14 @@ async def process_frame(frame_data: FrameData):
         if not frame_data.image:
             raise HTTPException(status_code=400, detail="No image data provided")
             
-        # For now, return a mock response with some variation
-        return {
-            "drowsinessScore": random.randint(0, 100),
-            "earValue": random.uniform(0.2, 0.4),
-            "isYawning": random.choice([True, False]),
-            "isPhoneDetected": random.choice([True, False]),
-            "gazeDirection": random.choice(["forward", "left", "right"]),
-            "blinkDetected": random.choice([True, False])
-        }
+        # Process the frame using our detector
+        result = detector.process_frame(frame_data.image)
+        
+        # If there was an error in processing, raise an HTTP exception
+        if "error" in result:
+            raise HTTPException(status_code=500, detail=result["error"])
+            
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
