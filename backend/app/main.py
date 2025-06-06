@@ -19,6 +19,7 @@ origins = [
     "http://localhost:3000",  # Local development
     "http://localhost:8000",  # Local development alternative port
     "https://driver-drowsiness-recognition.vercel.app",  # Production Vercel domain
+    "https://driver-drowsiness-recognition-mmo2oays1-arhaan17.vercel.app",  # Deployed Vercel domain
     "https://*.vercel.app",  # Any Vercel preview deployments
 ]
 
