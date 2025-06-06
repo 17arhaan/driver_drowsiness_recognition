@@ -31,8 +31,8 @@ import {
   Bell,
 } from "lucide-react"
 
-const PYTHON_BACKEND_URL = "http://localhost:5001/process_frame"
-const PYTHON_HEALTH_CHECK_URL = "http://localhost:5001/health"
+const PYTHON_BACKEND_URL = "https://driver-drowsiness-recognition-backend.up.railway.app/process_frame?t=" + Date.now()
+const PYTHON_HEALTH_CHECK_URL = "https://driver-drowsiness-recognition-backend.up.railway.app/health?t=" + Date.now()
 
 export default function DrowsinessDetectionDashboard() {
   const [isActive, setIsActive] = useState(false)
