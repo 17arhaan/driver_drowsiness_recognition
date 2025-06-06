@@ -31,8 +31,8 @@ import {
   Bell,
 } from "lucide-react"
 
-const PYTHON_BACKEND_URL = "https://driver-drowsiness-recognition-backend.up.railway.app/process_frame?t=" + Date.now()
-const PYTHON_HEALTH_CHECK_URL = "https://driver-drowsiness-recognition-backend.up.railway.app/health?t=" + Date.now()
+const PYTHON_BACKEND_URL = "https://backend-drowsiness-project-production.up.railway.app/process_frame?t=" + Date.now()
+const PYTHON_HEALTH_CHECK_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://backend-drowsiness-project-production.up.railway.app"
 
 export default function DrowsinessDetectionDashboard() {
   const [isActive, setIsActive] = useState(false)
@@ -70,10 +70,14 @@ export default function DrowsinessDetectionDashboard() {
   const [averageScore, setAverageScore] = useState(0)
 
   const performBackendHealthCheck = useCallback(async () => {
-    console.log("[FRONTEND] Performing backend health check to:", PYTHON_HEALTH_CHECK_URL)
+    console.log("[FRONTEND] Performing backend health check to:", `${PYTHON_HEALTH_CHECK_URL}/health?t=${Date.now()}`)
     setBackendErrorMessage("Attempting to connect to backend...")
     try {
-      const response = await fetch(PYTHON_HEALTH_CHECK_URL, { cache: "no-store" }) // no-store to prevent caching issues
+      const response = await fetch(`${PYTHON_HEALTH_CHECK_URL}/health?t=${Date.now()}`, { 
+        cache: "no-store",
+        mode: 'cors',
+        credentials: 'include'
+      })
       if (response.ok) {
         const data = await response.json()
         console.log("[FRONTEND] Backend health check successful:", data)
@@ -83,14 +87,14 @@ export default function DrowsinessDetectionDashboard() {
         console.error("[FRONTEND] Backend health check failed. Status:", response.status)
         setIsConnectedToBackend(false)
         setBackendErrorMessage(
-          `Backend not responding at ${PYTHON_HEALTH_CHECK_URL} (Status: ${response.status}). Is it running?`,
+          `Backend not responding at ${PYTHON_HEALTH_CHECK_URL}/health?t=${Date.now()} (Status: ${response.status}). Is it running?`,
         )
       }
     } catch (error) {
       console.error("[FRONTEND] Error during backend health check (fetch failed):", error)
       setIsConnectedToBackend(false)
       setBackendErrorMessage(
-        `Failed to connect to backend at ${PYTHON_HEALTH_CHECK_URL}. Is the Python server running and accessible? Details: ${error.message}`,
+        `Failed to connect to backend at ${PYTHON_HEALTH_CHECK_URL}/health?t=${Date.now()}. Is the Python server running and accessible? Details: ${error.message}`,
       )
     }
   }, [])

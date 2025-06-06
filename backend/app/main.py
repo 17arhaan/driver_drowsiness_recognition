@@ -17,11 +17,14 @@ app = FastAPI(
 # Configure CORS
 origins = [
     "http://localhost:3000",  # Local development
+    "http://localhost:3001",  # Local development alternative port
     "http://localhost:8000",  # Local development alternative port
     "https://driver-drowsiness-recognition.vercel.app",  # Production Vercel domain
     "https://driver-drowsiness-recognition-mmo2oays1-arhaan17.vercel.app",  # Deployed Vercel domain
     "https://driver-drowsiness-recognition-gg2ra3d2n-arhaan17.vercel.app",  # New Vercel deployment
     "https://*.vercel.app",  # Any Vercel preview deployments
+    "http://localhost:*",  # Allow any localhost port during development
+    "https://backend-drowsiness-project-production.up.railway.app",  # Production Railway backend
 ]
 
 app.add_middleware(
@@ -30,6 +33,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 
 class HealthCheck(BaseModel):
