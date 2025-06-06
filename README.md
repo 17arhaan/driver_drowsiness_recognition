@@ -65,8 +65,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Author
 
 - Arhaan - [GitHub](https://github.com/17arhaan)
-
-## Acknowledgments
-
-- Thanks to all contributors and supporters of this project
-- Special thanks to the open-source community for their invaluable tools and libraries 
