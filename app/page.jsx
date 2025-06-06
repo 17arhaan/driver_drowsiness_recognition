@@ -76,7 +76,11 @@ export default function DrowsinessDetectionDashboard() {
       const response = await fetch(`${PYTHON_HEALTH_CHECK_URL}/health?t=${Date.now()}`, { 
         cache: "no-store",
         mode: 'cors',
-        credentials: 'include'
+        credentials: 'omit',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        }
       })
       if (response.ok) {
         const data = await response.json()

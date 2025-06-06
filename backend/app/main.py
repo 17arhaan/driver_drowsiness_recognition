@@ -30,22 +30,41 @@ origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_credentials=False,  # Changed to False since we're using credentials: 'omit'
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
-    expose_headers=["*"]
+    expose_headers=["*"],
+    max_age=3600
 )
 
 class HealthCheck(BaseModel):
     status: str = "healthy"
 
+class FrameData(BaseModel):
+    image: str
+
 @app.get("/")
 async def root():
-    return {"message": "Driver Drowsiness Detection API"}
+    return {"message": "Driver Drowsiness Detection API is running"}
 
 @app.get("/health", response_model=HealthCheck)
 async def health_check():
     return HealthCheck()
+
+@app.post("/process_frame")
+async def process_frame(frame_data: FrameData):
+    try:
+        # For now, return a mock response
+        return {
+            "drowsinessScore": 0,
+            "earValue": 0.3,
+            "isYawning": False,
+            "isPhoneDetected": False,
+            "gazeDirection": "forward",
+            "blinkDetected": False
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
