@@ -31,7 +31,7 @@ import {
   Bell,
 } from "lucide-react"
 
-const PYTHON_BACKEND_URL = "https://backend-drowsiness-project-production.up.railway.app/process_frame?t=" + Date.now()
+const PYTHON_BACKEND_URL = "https://backend-drowsiness-project-production.up.railway.app/process_frame"
 const PYTHON_HEALTH_CHECK_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "https://backend-drowsiness-project-production.up.railway.app"
 
 export default function DrowsinessDetectionDashboard() {
